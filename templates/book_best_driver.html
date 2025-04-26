@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Book with Best Driver{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4">Book Rent with Best Driver</h2>
+    <form method="POST" action="{{ url_for('book_best_driver') }}">
+        <div class="mb-4">
+            <label class="block text-gray-700">Rent Date</label>
+            <input type="date" name="rent_date" class="w-full border rounded p-2" required>
+        </div>
+        <button type="submit" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Show Available Models</button>
+    </form>
+    {% if models %}
+    <h3 class="text-xl font-bold mt-6 mb-4">Available Models</h3>
+    <form method="POST" action="{{ url_for('book_best_driver') }}">
+        <input type="hidden" name="rent_date" value="{{ request.form.rent_date }}">
+        <table class="w-full border">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="border p-2">Model ID</th>
+                    <th class="border p-2">Car ID</th>
+                    <th class="border p-2">Brand</th>
+                    <th class="border p-2">Color</th>
+                    <th class="border p-2">Year</th>
+                    <th class="border p-2">Transmission</th>
+                    <th class="border p-2">Select</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for model in models %}
+                <tr>
+                    <td class="border p-2">{{ model[0] }}</td>
+                    <td class="border p-2">{{ model[1] }}</td>
+                    <td class="border p-2">{{ model[2] }}</td>
+                    <td class="border p-2">{{ model[3] }}</td>
+                    <td class="border p-2">{{ model[4] }}</td>
+                    <td class="border p-2">{{ model[5] }}</td>
+                    <td class="border p-2">
+                        <input type="radio" name="model_id" value="{{ model[0] }}" required>
+                        <input type="hidden" name="car_id" value="{{ model[1] }}">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" name="book" class="mt-4 bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Book with Best Driver</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

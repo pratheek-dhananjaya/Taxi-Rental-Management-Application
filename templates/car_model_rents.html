@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Car Model Rents{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4">Car Model Rents</h2>
+    <table class="w-full border">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border p-2">Model ID</th>
+                <th class="border p-2">Car ID</th>
+                <th class="border p-2">Brand</th>
+                <th class="border p-2">Color</th>
+                <th class="border p-2">Year</th>
+                <th class="border p-2">Transmission</th>
+                <th class="border p-2">Rent Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for model in models %}
+            <tr>
+                <td class="border p-2">{{ model[0] }}</td>
+                <td class="border p-2">{{ model[1] }}</td>
+                <td class="border p-2">{{ model[2] }}</td>
+                <td class="border p-2">{{ model[3] }}</td>
+                <td class="border p-2">{{ model[4] }}</td>
+                <td class="border p-2">{{ model[5] }}</td>
+                <td class="border p-2">{{ model[6] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

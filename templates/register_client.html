@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Register Client{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4">Register Client</h2>
+    <form method="POST" action="{{ url_for('register_client') }}" id="clientForm">
+        <div class="mb-4">
+            <label class="block text-gray-700">Name</label>
+            <input type="text" name="name" class="w-full border rounded p-2" required>
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700">Email</label>
+            <input type="email" name="email" class="w-full border rounded p-2" required>
+        </div>
+        <div id="addressFields">
+            <div class="mb-4 address-group">
+                <label class="block text-gray-700">Address (road_name,number,city)</label>
+                <input type="text" name="address[]" class="w-full border rounded p-2" placeholder="Main St,123,New York" required>
+            </div>
+        </div>
+        <button type="button" onclick="addAddressField()" class="mb-4 bg-gray-200 p-2 rounded">Add Another Address</button>
+        <div id="cardFields">
+            <div class="mb-4 card-group">
+                <label class="block text-gray-700">Credit Card Number</label>
+                <input type="text" name="card_number[]" class="w-full border rounded p-2" required>
+                <label class="block text-gray-700 mt-2">Payment Address (road_name,number,city)</label>
+                <input type="text" name="payment_address[]" class="w-full border rounded p-2" placeholder="Main St,123,New York" required>
+            </div>
+        </div>
+        <button type="button" onclick="addCardField()" class="mb-4 bg-gray-200 p-2 rounded">Add Another Card</button>
+        <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Register</button>
+    </form>
+</div>
+<script>
+function addAddressField() {
+    const container = document.getElementById('addressFields');
+    const newField = document.createElement('div');
+    newField.className = 'mb-4 address-group';
+    newField.innerHTML = `
+        <label class="block text-gray-700">Address (road_name,number,city)</label>
+        <input type="text" name="address[]" class="w-full border rounded p-2" placeholder="Main St,123,New York" required>
+    `;
+    container.appendChild(newField);
+}
+
+function addCardField() {
+    const container = document.getElementById('cardFields');
+    const newField = document.createElement('div');
+    newField.className = 'mb-4 card-group';
+    newField.innerHTML = `
+        <label class="block text-gray-700">Credit Card Number</label>
+        <input type="text" name="card_number[]" class="w-full border rounded p-2" required>
+        <label class="block text-gray-700 mt-2">Payment Address (road_name,number,city)</label>
+        <input type="text" name="payment_address[]" class="w-full border rounded p-2" placeholder="Main St,123,New York" required>
+    `;
+    container.appendChild(newField);
+}
+</script>
+{% endblock %}

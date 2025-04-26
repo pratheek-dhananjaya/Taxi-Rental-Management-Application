@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}View Rents{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4">Your Rents</h2>
+    <table class="w-full border">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border p-2">Rent ID</th>
+                <th class="border p-2">Date</th>
+                <th class="border p-2">Driver</th>
+                <th class="border p-2">Model ID</th>
+                <th class="border p-2">Car ID</th>
+                <th class="border p-2">Brand</th>
+                <th class="border p-2">Color</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rent in rents %}
+            <tr>
+                <td class="border p-2">{{ rent[0] }}</td>
+                <td class="border p-2">{{ rent[1] }}</td>
+                <td class="border p-2">{{ rent[2] }}</td>
+                <td class="border p-2">{{ rent[3] }}</td>
+                <td class="border p-2">{{ rent[4] }}</td>
+                <td class="border p-2">{{ rent[5] }}</td>
+                <td class="border p-2">{{ rent[6] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

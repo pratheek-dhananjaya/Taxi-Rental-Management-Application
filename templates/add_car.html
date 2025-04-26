@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Add Car{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4">Add Car</h2>
+    <form method="POST" action="{{ url_for('add_car') }}">
+        <div class="mb-4">
+            <label class="block text-gray-700">Car ID</label>
+            <input type="number" name="car_id" class="w-full border rounded p-2" required>
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700">Brand</label>
+            <input type="text" name="brand" class="w-full border rounded p-2" required>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Add Car</button>
+    </form>
+</div>
+{% endblock %}

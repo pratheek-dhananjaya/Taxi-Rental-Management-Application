@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Add Review{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4">Add Review</h2>
+    <form method="POST" action="{{ url_for('add_review') }}">
+        <div class="mb-4">
+            <label class="block text-gray-700">Driver Name</label>
+            <input type="text" name="driver_name" class="w-full border rounded p-2" required>
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700">Rating (0-5)</label>
+            <input type="number" name="rating" min="0" max="5" class="w-full border rounded p-2" required>
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700">Message</label>
+            <textarea name="message" class="w-full border rounded p-2"></textarea>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Add Review</button>
+    </form>
+</div>
+{% endblock %}

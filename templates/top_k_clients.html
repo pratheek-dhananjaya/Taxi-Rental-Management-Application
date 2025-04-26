@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Top-K Clients{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4">Top-K Clients</h2>
+    <form method="POST" action="{{ url_for('top_k_clients') }}">
+        <div class="mb-4">
+            <label class="block text-gray-700">K</label>
+            <input type="number" name="k" class="w-full border rounded p-2" required>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Get Top-K Clients</button>
+    </form>
+    {% if clients %}
+    <table class="mt-4 w-full border">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border p-2">Name</th>
+                <th class="border p-2">Email</th>
+                <th class="border p-2">Rent Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+            <tr>
+                <td class="border p-2">{{ client[0] }}</td>
+                <td class="border p-2">{{ client[1] }}</td>
+                <td class="border p-2">{{ client[2] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

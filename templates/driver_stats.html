@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Driver Stats{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4">Driver Stats</h2>
+    <table class="w-full border">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border p-2">Name</th>
+                <th class="border p-2">Rent Count</th>
+                <th class="border p-2">Average Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for driver in drivers %}
+            <tr>
+                <td class="border p-2">{{ driver[0] }}</td>
+                <td class="border p-2">{{ driver[1] }}</td>
+                <td class="border p-2">{{ driver[2] | round(2) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

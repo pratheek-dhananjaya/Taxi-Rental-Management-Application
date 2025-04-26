@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}City Query{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4">City Query</h2>
+    <form method="POST" action="{{ url_for('city_query') }}">
+        <div class="mb-4">
+            <label class="block text-gray-700">Client City</label>
+            <input type="text" name="city1" class="w-full border rounded p-2" required>
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700">Driver City</label>
+            <input type="text" name="city2" class="w-full border rounded p-2" required>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Query</button>
+    </form>
+    {% if clients %}
+    <table class="mt-4 w-full border">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border p-2">Name</th>
+                <th class="border p-2">Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+            <tr>
+                <td class="border p-2">{{ client[0] }}</td>
+                <td class="border p-2">{{ client[1] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

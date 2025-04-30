@@ -4,17 +4,19 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import psycopg2
 from psycopg2 import sql
 import uuid
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 app.secret_key = '8e967fe10f07a8dcc94003436508352d'  # Replace with a secure key
 
 # Database connection configuration
 DB_CONFIG = {
-    'dbname': 'project',
-    'user': 'postgres',
-    'password': 'root',  # Replace with actual password
-    'host': 'localhost',
-    'port': '5432'
+    'dbname': os.getenv('DB_NAME'),
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD'),
+    'host': os.getenv('DB_HOST'),
+    'port': os.getenv('DB_PORT')
 }
 
 def get_db_connection():

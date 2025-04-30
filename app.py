@@ -29,7 +29,7 @@ def login():
     if request.method == 'POST':
         role = request.form['role']
         if role == 'manager':
-            ssn = request.form['ssn']
+            ssn = request.form['password']
             conn = get_db_connection()
             cur = conn.cursor()
             cur.execute('SELECT ssn FROM Manager WHERE ssn = %s', (ssn,))
@@ -43,7 +43,7 @@ def login():
             else:
                 flash('Invalid SSN')
         elif role == 'client':
-            email = request.form['email']
+            email = request.form['password']
             conn = get_db_connection()
             cur = conn.cursor()
             cur.execute('SELECT email FROM Client WHERE email = %s', (email,))
@@ -57,7 +57,7 @@ def login():
             else:
                 flash('Invalid email')
         elif role == 'driver':
-            name = request.form['name']
+            name = request.form['password']
             conn = get_db_connection()
             cur = conn.cursor()
             cur.execute('SELECT name FROM Driver WHERE name = %s', (name,))

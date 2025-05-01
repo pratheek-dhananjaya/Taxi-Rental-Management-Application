@@ -22,12 +22,36 @@ DB_CONFIG = {
 def get_db_connection():
     return psycopg2.connect(**DB_CONFIG)
 
+def check_user():
+    if session.get('user'):
+        role = session.get('role')
+        if role == 'manager':
+            return 'manager_dashboard'
+        elif role == 'client':
+            return 'client_dashboard'
+        elif role == 'driver':
+            return 'driver_dashboard'
+        else:
+            return ''
+    else:
+        return ''
+
 @app.route('/')
 def index():
-    return render_template('login.html')
+    # return render_template('login.html')
+    current_route = check_user()
+    if (current_route):
+        return redirect(url_for(current_route))
+    else:
+        return render_template('login.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    # Check if the user is already logged in
+    current_route = check_user()
+    if (current_route):
+        return redirect(url_for(current_route))
+
     if request.method == 'POST':
         role = request.form['role']
         if role == 'manager':

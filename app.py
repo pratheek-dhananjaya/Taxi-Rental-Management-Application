@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 import os
 
 app = Flask(__name__)
-app.secret_key = '8e967fe10f07a8dcc94003436508352d'  # Replace with a secure key
+app.secret_key = '8e967fe10f07a8dcc94003436508352d'
 
 # Database connection configuration
 DB_CONFIG = {

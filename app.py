@@ -332,11 +332,22 @@ def driver_stats():
     try:
         cur.execute(
             '''
-            SELECT d.name, COUNT(r.rent_id) as rent_count, COALESCE(AVG(rev.rating), 0) as avg_rating
-            FROM Driver d
-            LEFT JOIN Rent r ON d.name = r.driver_name
-            LEFT JOIN Review rev ON d.name = rev.driver_name
-            GROUP BY d.name
+            WITH rent_counts AS (
+            SELECT driver_name, COUNT(*) AS rent_count
+            FROM Rent
+            GROUP BY driver_name
+            ),
+            review_avgs AS (
+                SELECT driver_name, AVG(rating) AS avg_rating
+                FROM Review
+                GROUP BY driver_name
+            )
+            SELECT  d.name,
+                    COALESCE(rc.rent_count, 0) AS rent_count,
+                    COALESCE(ra.avg_rating, 0) AS avg_rating
+            FROM    Driver d
+            LEFT JOIN rent_counts  rc ON rc.driver_name  = d.name
+            LEFT JOIN review_avgs ra ON ra.driver_name = d.name;
             '''
         )
         drivers = cur.fetchall()
@@ -416,13 +427,29 @@ def brand_stats():
     try:
         cur.execute(
             '''
-            SELECT c.brand, COALESCE(AVG(rev.rating), 0) as avg_rating, COUNT(r.rent_id) as rent_count
-            FROM Car c
-            JOIN Model m ON c.car_id = m.car_id
-            LEFT JOIN DriverModel dm ON m.model_id = dm.model_id AND m.car_id = dm.car_id
-            LEFT JOIN Review rev ON dm.driver_name = rev.driver_name
-            LEFT JOIN Rent r ON m.model_id = r.model_id AND m.car_id = r.car_id
-            GROUP BY c.brand
+            WITH rents_by_brand AS (
+            SELECT c.brand, COUNT(*) AS rent_count
+            FROM   Car   c
+            JOIN   Model m  ON m.car_id = c.car_id
+            JOIN   Rent  r  ON r.car_id  = m.car_id
+                        AND r.model_id = m.model_id
+            GROUP  BY c.brand
+            ),
+            reviews_by_brand AS (
+                SELECT c.brand, AVG(rev.rating) AS avg_rating
+                FROM   Car         c
+                JOIN   Model       m  ON m.car_id = c.car_id
+                JOIN   DriverModel dm ON dm.car_id   = m.car_id
+                                    AND dm.model_id = m.model_id
+                JOIN   Review      rev ON rev.driver_name = dm.driver_name
+                GROUP  BY c.brand
+            )
+            SELECT  b.brand,
+                    COALESCE(rv.avg_rating, 0) AS avg_rating,
+                    COALESCE(rt.rent_count, 0) AS rent_count
+            FROM   (SELECT DISTINCT brand FROM Car) b
+            LEFT JOIN rents_by_brand   rt ON rt.brand = b.brand
+            LEFT JOIN reviews_by_brand rv ON rv.brand = b.brand;
             '''
         )
         brands = cur.fetchall()

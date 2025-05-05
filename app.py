@@ -219,6 +219,67 @@ def remove_driver():
     conn.close()
     return render_template('remove_driver.html', drivers=drivers)
 
+@app.route('/remove_car', methods=['GET', 'POST'])
+def remove_car():
+    if session.get('role') != 'manager':
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    if request.method == 'POST':
+        car_id = request.form['car_id']
+        try:
+            cur.execute('DELETE FROM Car WHERE car_id = %s', (car_id,))
+            conn.commit()
+            flash(f'Car "{car_id}" removed successfully.')
+        except Exception as e:
+            conn.rollback()
+            flash(f'Error removing car: {e}')
+
+    # on GET or after POST, reload the current cars
+    cur.execute('SELECT car_id, brand FROM Car ORDER BY car_id')
+    cars = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return render_template('remove_car.html', cars=cars)
+
+@app.route('/remove_model', methods=['GET', 'POST'])
+def remove_model():
+    if session.get('role') != 'manager':
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    if request.method == 'POST':
+        sel = request.form['model']              # “model” field is “<model_id>|<car_id>”
+        model_id, car_id = sel.split('|')
+        try:
+            cur.execute(
+                'DELETE FROM Model WHERE model_id = %s AND car_id = %s',
+                (model_id, car_id)
+            )
+            conn.commit()
+            flash(f'Model "{model_id}" (Car {car_id}) removed successfully.')
+        except Exception as e:
+            conn.rollback()
+            flash(f'Error removing model: {e}')
+
+    # on GET or after POST, reload all models
+    cur.execute('''
+        SELECT m.model_id, m.car_id, c.brand
+        FROM Model m
+        JOIN Car c ON m.car_id = c.car_id
+        ORDER BY m.model_id
+    ''')
+    models = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return render_template('remove_model.html', models=models)
+
 @app.route('/client_dashboard')
 def client_dashboard():
     if session.get('role') != 'client':

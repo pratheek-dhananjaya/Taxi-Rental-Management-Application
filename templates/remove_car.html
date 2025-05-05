@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Remove Car{% endblock %}
+{% block content %}
+
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+  <h2 class="text-2xl font-semibold mb-4">Remove Car</h2>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class="mb-4 list-disc pl-5 text-red-600">
+        {% for msg in messages %}
+          <li>{{ msg }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <form action="{{ url_for('remove_car') }}" method="post" class="space-y-4">
+    <div>
+      <label for="car_id" class="block text-sm font-medium text-gray-700">Select Car</label>
+      <select name="car_id" id="car_id" required
+              class="mt-1 block w-full border-gray-300 rounded-md">
+        <option value="" disabled selected>-- choose a car --</option>
+        {% for id, brand in cars %}
+          <option value="{{ id }}">{{ id }} — {{ brand }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit"
+            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+      Remove Car
+    </button>
+  </form>
+</div>
+
+{% endblock %}

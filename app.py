@@ -201,6 +201,22 @@ def remove_driver():
     if request.method == 'POST':
         driver_name = request.form['driver_name']
         try:
+            # First delete associated reviews
+            cur.execute(
+                'DELETE FROM Review WHERE driver_name = %s',
+                (driver_name,)
+            )
+            # Then delete associated rent records
+            cur.execute(
+                'DELETE FROM Rent WHERE driver_name = %s',
+                (driver_name,)
+            )
+            # Delete driver's model assignments
+            cur.execute(
+                'DELETE FROM DriverModel WHERE driver_name = %s',
+                (driver_name,)
+            )
+            # Finally delete the driver
             cur.execute(
                 'DELETE FROM Driver WHERE name = %s',
                 (driver_name,)
@@ -230,7 +246,26 @@ def remove_car():
     if request.method == 'POST':
         car_id = request.form['car_id']
         try:
-            cur.execute('DELETE FROM Car WHERE car_id = %s', (car_id,))
+            # First delete associated rent records
+            cur.execute(
+                'DELETE FROM Rent WHERE car_id = %s',
+                (car_id,)
+            )
+            # Then delete driver model assignments
+            cur.execute(
+                'DELETE FROM DriverModel WHERE car_id = %s',
+                (car_id,)
+            )
+            # Delete all models for this car
+            cur.execute(
+                'DELETE FROM Model WHERE car_id = %s',
+                (car_id,)
+            )
+            # Finally delete the car
+            cur.execute(
+                'DELETE FROM Car WHERE car_id = %s',
+                (car_id,)
+            )
             conn.commit()
             flash(f'Car "{car_id}" removed successfully.')
         except Exception as e:
@@ -254,9 +289,20 @@ def remove_model():
     cur = conn.cursor()
 
     if request.method == 'POST':
-        sel = request.form['model']              # “model” field is “<model_id>|<car_id>”
+        sel = request.form['model']              # "model" field is "<model_id>|<car_id>"
         model_id, car_id = sel.split('|')
         try:
+            # First delete associated rent records
+            cur.execute(
+                'DELETE FROM Rent WHERE model_id = %s AND car_id = %s',
+                (model_id, car_id)
+            )
+            # Then delete driver model assignments
+            cur.execute(
+                'DELETE FROM DriverModel WHERE model_id = %s AND car_id = %s',
+                (model_id, car_id)
+            )
+            # Finally delete the model
             cur.execute(
                 'DELETE FROM Model WHERE model_id = %s AND car_id = %s',
                 (model_id, car_id)

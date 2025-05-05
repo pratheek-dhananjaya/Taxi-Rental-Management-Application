@@ -343,17 +343,20 @@ def add_car():
     if session.get('role') != 'manager':
         return redirect(url_for('login'))
     if request.method == 'POST':
-        car_id = request.form['car_id']
         brand = request.form['brand']
         conn = get_db_connection()
         cur = conn.cursor()
         try:
+            # Get the maximum car_id and increment by 1
+            cur.execute('SELECT COALESCE(MAX(car_id), 0) + 1 FROM Car')
+            car_id = cur.fetchone()[0]
+            
             cur.execute(
                 'INSERT INTO Car (car_id, brand) VALUES (%s, %s)',
                 (car_id, brand)
             )
             conn.commit()
-            flash('Car added successfully')
+            flash(f'Car added successfully with ID: {car_id}')
         except psycopg2.Error as e:
             conn.rollback()
             flash(f'Error: {e}')
@@ -366,13 +369,19 @@ def add_car():
 def add_model():
     if session.get('role') != 'manager':
         return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    # Get available cars for the dropdown
+    cur.execute('SELECT car_id, brand FROM Car ORDER BY car_id')
+    cars = cur.fetchall()
+    
     if request.method == 'POST':
         car_id = request.form['car_id']
         color = request.form['color']
         construction_year = request.form['construction_year']
         transmission_type = request.form['transmission_type']
-        conn = get_db_connection()
-        cur = conn.cursor()
         try:
             cur.execute(
                 'INSERT INTO Model (car_id, color, construction_year, transmission_type) VALUES (%s, %s, %s, %s)',
@@ -383,10 +392,10 @@ def add_model():
         except psycopg2.Error as e:
             conn.rollback()
             flash(f'Error: {e}')
-        finally:
-            cur.close()
-            conn.close()
-    return render_template('add_model.html')
+    
+    cur.close()
+    conn.close()
+    return render_template('add_model.html', cars=cars)
 
 @app.route('/add_driver', methods=['GET', 'POST'])
 def add_driver():

@@ -5,8 +5,13 @@
     <h2 class="text-2xl font-bold mb-4">Add Model</h2>
     <form method="POST" action="{{ url_for('add_model') }}">
         <div class="mb-4">
-            <label class="block text-gray-700">Car ID</label>
-            <input type="number" name="car_id" class="w-full border rounded p-2" required>
+            <label class="block text-gray-700">Car</label>
+            <select name="car_id" class="w-full border rounded p-2" required>
+                <option value="" disabled selected>-- Select a car --</option>
+                {% for car_id, brand in cars %}
+                    <option value="{{ car_id }}">{{ brand }} (ID: {{ car_id }})</option>
+                {% endfor %}
+            </select>
         </div>
         <div class="mb-4">
             <label class="block text-gray-700">Color</label>
@@ -18,7 +23,8 @@
         </div>
         <div class="mb-4">
             <label class="block text-gray-700">Transmission Type</label>
-            <select name="transmission_type" class="w-full border rounded p-2">
+            <select name="transmission_type" class="w-full border rounded p-2" required>
+                <option value="" disabled selected>-- Select transmission type --</option>
                 <option value="manual">Manual</option>
                 <option value="automatic">Automatic</option>
             </select>

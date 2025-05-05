@@ -5,12 +5,15 @@
     <h2 class="text-2xl font-bold mb-4">Assign Model</h2>
     <form method="POST" action="{{ url_for('assign_model') }}">
         <div class="mb-4">
-            <label class="block text-gray-700">Model ID</label>
-            <input type="number" name="model_id" class="w-full border rounded p-2" required>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700">Car ID</label>
-            <input type="number" name="car_id" class="w-full border rounded p-2" required>
+            <label class="block text-gray-700">Select Model</label>
+            <select name="model" class="w-full border rounded p-2" required>
+                <option value="" disabled selected>-- Select a model --</option>
+                {% for model_id, car_id, brand, color, year, transmission in models %}
+                    <option value="{{ model_id }}|{{ car_id }}">
+                        {{ brand }} - Model {{ model_id }} (Car {{ car_id }}) - {{ color }}, {{ year }}, {{ transmission }}
+                    </option>
+                {% endfor %}
+            </select>
         </div>
         <button type="submit" class="w-full bg-black text-white p-2 rounded hover:bg-blue-700">Assign Model</button>
     </form>

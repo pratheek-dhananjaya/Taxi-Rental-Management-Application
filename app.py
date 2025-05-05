@@ -676,12 +676,29 @@ def view_models():
 def assign_model():
     if session.get('role') != 'driver':
         return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    # Get available models for the dropdown
+    cur.execute('''
+        SELECT m.model_id, m.car_id, c.brand, m.color, m.construction_year, m.transmission_type
+        FROM Model m
+        JOIN Car c ON m.car_id = c.car_id
+        WHERE NOT EXISTS (
+            SELECT 1 FROM DriverModel dm 
+            WHERE dm.model_id = m.model_id 
+            AND dm.car_id = m.car_id 
+            AND dm.driver_name = %s
+        )
+        ORDER BY m.model_id
+    ''', (session['user'],))
+    models = cur.fetchall()
+    
     if request.method == 'POST':
-        model_id = request.form['model_id']
-        car_id = request.form['car_id']
+        model_sel = request.form['model']  # Format: "model_id|car_id"
+        model_id, car_id = model_sel.split('|')
         driver_name = session['user']
-        conn = get_db_connection()
-        cur = conn.cursor()
         try:
             cur.execute(
                 'INSERT INTO DriverModel (driver_name, model_id, car_id) VALUES (%s, %s, %s)',
@@ -692,10 +709,10 @@ def assign_model():
         except psycopg2.Error as e:
             conn.rollback()
             flash(f'Error: {e}')
-        finally:
-            cur.close()
-            conn.close()
-    return render_template('assign_model.html')
+    
+    cur.close()
+    conn.close()
+    return render_template('assign_model.html', models=models)
 
 @app.route('/book_rent', methods=['GET', 'POST'])
 def book_rent():

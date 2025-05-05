@@ -175,7 +175,49 @@ def register_client():
 def manager_dashboard():
     if session.get('role') != 'manager':
         return redirect(url_for('login'))
-    return render_template('manager_dashboard.html')
+    # ── load all driver names for the dropdown
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT name FROM Driver')
+    driver_records = cur.fetchall()
+    cur.close()
+    conn.close()
+    drivers = [row[0] for row in driver_records]
+
+    return render_template(
+        'manager_dashboard.html',
+        drivers=drivers
+    )
+
+@app.route('/remove_driver', methods=['GET', 'POST'])
+def remove_driver():
+    # only managers allowed
+    if session.get('role') != 'manager':
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cur  = conn.cursor()
+
+    if request.method == 'POST':
+        driver_name = request.form['driver_name']
+        try:
+            cur.execute(
+                'DELETE FROM Driver WHERE name = %s',
+                (driver_name,)
+            )
+            conn.commit()
+            flash(f'Driver "{driver_name}" removed successfully.')
+        except Exception as e:
+            conn.rollback()
+            flash(f'Error removing driver: {e}')
+
+    # on GET (or after POST), reload list of names
+    cur.execute('SELECT name FROM Driver ORDER BY name')
+    drivers = [row[0] for row in cur.fetchall()]
+
+    cur.close()
+    conn.close()
+    return render_template('remove_driver.html', drivers=drivers)
 
 @app.route('/client_dashboard')
 def client_dashboard():
